@@ -363,6 +363,7 @@ public class CPU {
 				} else if (instrType == 19) {
 					//Bitwise invert the value stored in the accumulator
 					regA.load(myALU.invert(regA.getReg()));
+					progCounter.offset((byte) 2);
 				}  else if (instrType == 11) {
 					//Bitwise AND (immediate)
 					byte operSpec1 = (byte) (((instrReg.getReg() & 0xFF00)) >> 8);
@@ -430,7 +431,7 @@ public class CPU {
 				} else if (instrType == 23) {
 					//Branch if RegA Less Than or Equal To Zero
 					//Immediate Addressing Mode
-					if (regA.getReg() <= 0) {
+					if (myALU.nFlagIsSet() || myALU.zFlagIsSet()) {
 						byte operSpec1 = (byte) (((instrReg.getReg() & 0xFF00)) >> 8);
 						byte operSpec2 = (byte) (instrReg.getReg() & 0xFF);
 						short fuse = fuseBytes(operSpec1, operSpec2);
@@ -441,7 +442,7 @@ public class CPU {
 				} else if (instrType == 24) {
 					//Branch if RegA Less Than or Equal To Zero
 					//Direct Addressing Mode
-					if (regA.getReg() <= 0) {
+					if (myALU.nFlagIsSet() || myALU.zFlagIsSet()) {
 						byte operSpec1 = (byte) (((instrReg.getReg() & 0xFF00)) >> 8);
 						byte operSpec2 = (byte) (instrReg.getReg() & 0xFF);
 						short fuse = this.calculateDirectAddress(operSpec1, operSpec2);
@@ -455,7 +456,7 @@ public class CPU {
 				} else if (instrType == 25) {
 					//Branch if RegA Less Than Zero
 					//Immediate Addressing Mode
-					if (regA.getReg() < 0) {
+					if (myALU.nFlagIsSet()) {
 						byte operSpec1 = (byte) (((instrReg.getReg() & 0xFF00)) >> 8);
 						byte operSpec2 = (byte) (instrReg.getReg() & 0xFF);
 						short fuse = fuseBytes(operSpec1, operSpec2);
@@ -466,7 +467,7 @@ public class CPU {
 				} else if (instrType == 26) {
 					//Branch if RegA Less Than Zero
 					//Direct Addressing Mode
-					if (regA.getReg() <= 0) {
+					if (myALU.nFlagIsSet()) {
 						byte operSpec1 = (byte) (((instrReg.getReg() & 0xFF00)) >> 8);
 						byte operSpec2 = (byte) (instrReg.getReg() & 0xFF);
 						short fuse = this.calculateDirectAddress(operSpec1, operSpec2);
@@ -480,7 +481,7 @@ public class CPU {
 				} else if (instrType == 27) {
 					//Branch if RegA Equal To Zero
 					//Immediate Addressing Mode
-					if (regA.getReg() == 0) {
+					if (myALU.zFlagIsSet()) {
 						byte operSpec1 = (byte) (((instrReg.getReg() & 0xFF00)) >> 8);
 						byte operSpec2 = (byte) (instrReg.getReg() & 0xFF);
 						short fuse = fuseBytes(operSpec1, operSpec2);
@@ -491,7 +492,7 @@ public class CPU {
 				} else if (instrType == 28) {
 					//Branch if RegA Equal To Zero
 					//Direct Addressing Mode
-					if (regA.getReg() <= 0) {
+					if (myALU.zFlagIsSet()) {
 						byte operSpec1 = (byte) (((instrReg.getReg() & 0xFF00)) >> 8);
 						byte operSpec2 = (byte) (instrReg.getReg() & 0xFF);
 						short fuse = this.calculateDirectAddress(operSpec1, operSpec2);
@@ -505,7 +506,7 @@ public class CPU {
 				} else if (instrType == 29) {
 					//Branch if RegA Not Equal To Zero
 					//Immediate Addressing Mode
-					if (regA.getReg() != 0) {
+					if (!myALU.zFlagIsSet()) {
 						byte operSpec1 = (byte) (((instrReg.getReg() & 0xFF00)) >> 8);
 						byte operSpec2 = (byte) (instrReg.getReg() & 0xFF);
 						short fuse = fuseBytes(operSpec1, operSpec2);
@@ -516,7 +517,7 @@ public class CPU {
 				} else if (instrType == 30) {
 					//Branch if RegA Not Equal To Zero
 					//Direct Addressing Mode
-					if (regA.getReg() <= 0) {
+					if (!myALU.zFlagIsSet()) {
 						byte operSpec1 = (byte) (((instrReg.getReg() & 0xFF00)) >> 8);
 						byte operSpec2 = (byte) (instrReg.getReg() & 0xFF);
 						short fuse = this.calculateDirectAddress(operSpec1, operSpec2);
@@ -530,7 +531,7 @@ public class CPU {
 				} else if (instrType == 31) {
 					//Branch if RegA Greater Than or Equal To Zero
 					//Immediate Addressing Mode
-					if (regA.getReg() >= 0) {
+					if (!myALU.nFlagIsSet() || myALU.zFlagIsSet()) {
 						byte operSpec1 = (byte) (((instrReg.getReg() & 0xFF00)) >> 8);
 						byte operSpec2 = (byte) (instrReg.getReg() & 0xFF);
 						short fuse = fuseBytes(operSpec1, operSpec2);
@@ -541,7 +542,7 @@ public class CPU {
 				} else if (instrType == 32) {
 					//Branch if RegA Greater Than or Equal To Zero
 					//Direct Addressing Mode
-					if (regA.getReg() <= 0) {
+					if (!myALU.nFlagIsSet() || myALU.zFlagIsSet()) {
 						byte operSpec1 = (byte) (((instrReg.getReg() & 0xFF00)) >> 8);
 						byte operSpec2 = (byte) (instrReg.getReg() & 0xFF);
 						short fuse = this.calculateDirectAddress(operSpec1, operSpec2);
@@ -555,7 +556,7 @@ public class CPU {
 				} else if (instrType == 33) {
 					//Branch if RegA Greater Than Zero
 					//Immediate Addressing Mode
-					if (regA.getReg() > 0) {
+					if (!myALU.nFlagIsSet()) {
 						byte operSpec1 = (byte) (((instrReg.getReg() & 0xFF00)) >> 8);
 						byte operSpec2 = (byte) (instrReg.getReg() & 0xFF);
 						short fuse = fuseBytes(operSpec1, operSpec2);
@@ -566,7 +567,7 @@ public class CPU {
 				} else if (instrType == 34) {
 					//Branch if RegA Greater Than Zero
 					//Direct Addressing Mode
-					if (regA.getReg() <= 0) {
+					if (!myALU.nFlagIsSet()) {
 						byte operSpec1 = (byte) (((instrReg.getReg() & 0xFF00)) >> 8);
 						byte operSpec2 = (byte) (instrReg.getReg() & 0xFF);
 						short fuse = this.calculateDirectAddress(operSpec1, operSpec2);
